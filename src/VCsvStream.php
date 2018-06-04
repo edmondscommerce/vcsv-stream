@@ -12,6 +12,8 @@ class VCsvStream
 
     private static $startTime;
 
+    private static $header;
+
     /**
      * Initialise VCsvStream.
      *
@@ -56,5 +58,10 @@ class VCsvStream
             array_values($stat),
             $stat
         );
+    }
+
+    public static function addHeader(VCsvStreamHeader $header)
+    {
+        self::$header = $header;
     }
 }
