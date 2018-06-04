@@ -1,0 +1,30 @@
+{
+  "name": "ben-rowan/vcsv-stream",
+  "description": "Virtual CSV stream for creating CSV fixtures",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ben Rowan"
+    }
+  ],
+  "require": {
+    "php": "^7.1",
+    "fzaninotto/faker": "^1.7"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^0.9.2",
+    "phpmd/phpmd" : "@stable",
+    "phpunit/phpunit": "^7.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "BenRowan\\VCsvStream\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "BenRowan\\VCsvStream\\Tests\\": "tests/"
+    }
+  }
+}
