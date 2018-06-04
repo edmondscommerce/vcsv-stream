@@ -6,25 +6,25 @@ use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
 use BenRowan\VCsvStream\Generators\GeneratorFactory;
 use BenRowan\VCsvStream\Generators\GeneratorInterface;
 
-abstract class AbstractRow
+abstract class AbstractRow implements RowInterface
 {
     protected $columns = [];
 
-    public function addValueColumn(string $name, $value): self
+    public function addValueColumn(string $name, $value): RowInterface
     {
         $this->columns[$name] = GeneratorFactory::createFixedValue($value);
 
         return $this;
     }
 
-    public function addFakerColumn(string $name, string $property, bool $isUnique = false): self
+    public function addFakerColumn(string $name, string $property, bool $isUnique = false): RowInterface
     {
         $this->columns[$name] = GeneratorFactory::createFakerValue($property, $isUnique);
 
         return $this;
     }
 
-    public function addColumn(string $name): self
+    public function addColumn(string $name): RowInterface
     {
         $this->columns[$name] = GeneratorFactory::createFakerValue();
 

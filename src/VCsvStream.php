@@ -4,8 +4,7 @@ namespace BenRowan\VCsvStream;
 
 use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
 use BenRowan\VCsvStream\Generators\GeneratorFactory;
-use BenRowan\VCsvStream\Rows\Header;
-use BenRowan\VCsvStream\Rows\Record;
+use BenRowan\VCsvStream\Rows\RowInterface;
 
 class VCsvStream
 {
@@ -80,7 +79,7 @@ class VCsvStream
         );
     }
 
-    public static function addHeader(Header $header): void
+    public static function addHeader(RowInterface $header): void
     {
         self::$header = $header;
     }
@@ -90,14 +89,27 @@ class VCsvStream
         return null !== self::$header;
     }
 
-    public static function getHeader(): Header
+    public static function getHeader(): RowInterface
     {
         return self::$header;
     }
 
-    public static function addRecord(Record $record): void
+    /**
+     * @param RowInterface $record
+     */
+    public static function addRecord(RowInterface $record): void
     {
         self::$records[] = $record;
+    }
+
+    /**
+     * @param RowInterface[] $records
+     */
+    public static function addRecords(array $records): void
+    {
+        foreach ($records as $record) {
+            self::addRecord($record);
+        }
     }
 
     public static function hasRecords(): bool
@@ -106,10 +118,10 @@ class VCsvStream
     }
 
     /**
-     * @return Record
+     * @return RowInterface
      * @throws VCsvStreamException
      */
-    public static function currentRecord(): Record
+    public static function currentRecord(): RowInterface
     {
         if (! self::hasRecords()) {
             throw new VCsvStreamException('No record available.');

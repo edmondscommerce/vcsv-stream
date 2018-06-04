@@ -10,7 +10,7 @@ class VCsvStreamWrapper
 {
     private const PROTOCOL = 'vcsv';
 
-    private $content = '';
+    private $buffer = '';
 
     /**
      * @return string
@@ -147,9 +147,24 @@ class VCsvStreamWrapper
         return true;
     }
 
-    private function currentContentSizeBytes(): int
+    private function currentBufferSizeBytes(): int
     {
-        return \strlen($this->content);
+        return \strlen($this->buffer);
+    }
+
+    private function truncateBuffer(int $readSizeBytes): void
+    {
+        if ($readSizeBytes < $this->currentBufferSizeBytes()) {
+            $this->buffer = \substr($this->buffer, $readSizeBytes);
+            return;
+        }
+
+        $this->buffer = '';
+    }
+
+    private function read(int $bytes): string
+    {
+        return \substr($this->buffer, 0, $bytes);
     }
 
     /**
@@ -159,29 +174,24 @@ class VCsvStreamWrapper
      */
     public function stream_read(int $requestedReadSizeBytes): string
     {
-        $this->content .= $this->renderHeader();
+        $this->buffer .= $this->renderHeader();
 
-        while (VCsvStream::hasRecords() && $requestedReadSizeBytes > $this->currentContentSizeBytes()) {
-            $this->content .= $this->renderRecord();
+        while (VCsvStream::hasRecords() && $requestedReadSizeBytes > $this->currentBufferSizeBytes()) {
+            $this->buffer .= $this->renderRecord();
         }
 
-        $read = \substr($this->content, 0, $requestedReadSizeBytes);
+        $content = $this->read($requestedReadSizeBytes);
 
-        if ($requestedReadSizeBytes < $this->currentContentSizeBytes()) {
-            $this->content = \substr($this->content, $requestedReadSizeBytes);
-        }
-        else {
-            $this->content = '';
-        }
+        $this->truncateBuffer($requestedReadSizeBytes);
 
-        return $read;
+        return $content;
     }
 
     public function stream_eof(): bool
     {
         return (VCsvStream::hasHeader() && VCsvStream::getHeader()->isFullyRendered())
             && ! VCsvStream::hasRecords()
-            && '' === $this->content;
+            && '' === $this->buffer;
     }
 
     public function url_stat(): array
