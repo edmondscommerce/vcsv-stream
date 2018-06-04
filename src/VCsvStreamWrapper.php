@@ -3,54 +3,106 @@
 namespace BenRowan\VCsvStream;
 
 use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
-use Faker;
+use BenRowan\VCsvStream\Rows\Header;
+use BenRowan\VCsvStream\Rows\Record;
 
 class VCsvStreamWrapper
 {
-    public const PROTOCOL = 'vcsv';
-
-    /**
-     * @var Faker\Factory
-     */
-    private static $faker;
-
-    private $header = ['One', 'Two'];
-
-    private $hasHeader = true;
-
-    private $headerHasBeenOutput = false;
-
-    private $remainingRows = 1000;
+    private const PROTOCOL = 'vcsv';
 
     private $content = '';
 
-    private function outputHeader(): string
+    /**
+     * @return string
+     * @throws VCsvStreamException
+     */
+    private function renderHeader(): string
     {
-        $header = '';
-
-        if (! $this->hasHeader) {
-            return $header;
+        if (! VCsvStream::hasHeader()) {
+            throw new VCsvStreamException('For now you have to specify a CSV header');
         }
 
-        if ($this->headerHasBeenOutput) {
-            return $header;
+        /** @var Header $header */
+        $header = VCsvStream::getHeader();
+
+        if ($header->isFullyRendered()) {
+            return '';
         }
 
-        $this->headerHasBeenOutput = true;
+        $renderedRow = $this->renderRow($header->getColumnNames());
 
-        return implode(', ', $this->header) . "\n";
+        $header->markRowRendered();
+
+        return $renderedRow;
     }
 
-    private function outputRow(): string
+    /**
+     * Hierarchy:
+     *
+     *  - Record column generator
+     *  - Header column generator
+     *  - Generic text generator
+     *
+     * @return string
+     * @throws VCsvStreamException
+     */
+    private function renderRecord(): string
     {
-        $row = [
-            '"' . self::$faker->text . '"',
-            '"' . self::$faker->text . '"'
-        ];
+        if (! VCsvStream::hasRecords()) {
+            return '';
+        }
 
-        $this->remainingRows--;
+        /** @var Record $record */
+        $record = VCsvStream::currentRecord();
 
-        return implode(', ', $row) . "\n";
+        /** @var Header $header */
+        $header = VCsvStream::getHeader();
+
+        $row = [];
+
+        foreach ($header->getColumnNames() as $columnName) {
+
+            if ($record->hasColumnGenerator($columnName)) {
+                $row[] = $record->getColumnGenerator($columnName)->generate();
+                continue;
+            }
+
+            if ($header->hasColumnGenerator($columnName)) {
+                $row[] = $header->getColumnGenerator($columnName)->generate();
+                continue;
+            }
+
+            throw new VCsvStreamException("No generator found for column '$columnName'");
+        }
+
+        $renderedRow = $this->renderRow($row);
+
+        $record->markRowRendered();
+
+        if ($record->isFullyRendered()) {
+            VCsvStream::nextRecord();
+        }
+
+        return $renderedRow;
+    }
+
+    private function renderRow(array $columns): string
+    {
+        $row = implode(
+            VCsvStream::getDelimiter(),
+            array_map(
+                function (string $value) {
+                    if (is_numeric($value)) {
+                        return (string) $value;
+                    }
+
+                    return VCsvStream::getEnclosure() . $value . VCsvStream::getEnclosure();
+                },
+                $columns
+            )
+        );
+
+        return $row . VCsvStream::getNewline();
     }
 
     private static function isStreamRegistered(): bool
@@ -88,26 +140,35 @@ class VCsvStreamWrapper
         }
 
         self::registerStream();
-
-        self::$faker = Faker\Factory::create();
     }
 
-    public function stream_open(string $path , string $mode , int $options , ?string &$opened_path): bool
+    public function stream_open(): bool
     {
         return true;
     }
 
-    public function stream_read(int $count): string
+    private function currentContentSizeBytes(): int
     {
-        while ($this->remainingRows > 0 && $count > \strlen($this->content)) {
-            $this->content .= $this->outputHeader();
-            $this->content .= $this->outputRow();
+        return \strlen($this->content);
+    }
+
+    /**
+     * @param int $requestedReadSizeBytes
+     * @return string
+     * @throws VCsvStreamException
+     */
+    public function stream_read(int $requestedReadSizeBytes): string
+    {
+        $this->content .= $this->renderHeader();
+
+        while (VCsvStream::hasRecords() && $requestedReadSizeBytes > $this->currentContentSizeBytes()) {
+            $this->content .= $this->renderRecord();
         }
 
-        $read = substr($this->content, 0, $count);
+        $read = \substr($this->content, 0, $requestedReadSizeBytes);
 
-        if ($count < \strlen($this->content)) {
-            $this->content = substr($this->content, $count);
+        if ($requestedReadSizeBytes < $this->currentContentSizeBytes()) {
+            $this->content = \substr($this->content, $requestedReadSizeBytes);
         }
         else {
             $this->content = '';
@@ -118,7 +179,9 @@ class VCsvStreamWrapper
 
     public function stream_eof(): bool
     {
-        return 0 === $this->remainingRows && '' === $this->content;
+        return (VCsvStream::hasHeader() && VCsvStream::getHeader()->isFullyRendered())
+            && ! VCsvStream::hasRecords()
+            && '' === $this->content;
     }
 
     public function url_stat(): array

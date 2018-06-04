@@ -2,8 +2,9 @@
 
 namespace BenRowan\VCsvStream\Test;
 
+use BenRowan\VCsvStream\Rows\Header;
+use BenRowan\VCsvStream\Rows\Record;
 use BenRowan\VCsvStream\VCsvStream;
-use BenRowan\VCsvStream\VCsvStreamHeader;
 use PHPUnit\Framework\TestCase;
 
 class VCsvStreamTest extends TestCase
@@ -19,19 +20,23 @@ class VCsvStreamTest extends TestCase
     {
         VCsvStream::setup();
 
-        $header = new VCsvStreamHeader();
+        $header = new Header();
 
         $header
-            ->addFixedValueColumn('Column One', 1)
-            ->addFakerValueColumn('Column Two', 'randomNumber', true)
+            ->addValueColumn('Column One', 1)
+            ->addFakerColumn('Column Two', 'randomNumber', true)
             ->addColumn('Column Three');
 
         vCsvStream::addHeader($header);
+        VCsvStream::addRecord(new Record(10));
 
         $vCsv = new \SplFileObject('vcsv://fixture.csv');
 
+        $rows = [];
         while ($row = $vCsv->fgetcsv()) {
-            $this->assertNotNull($row);
+            $rows[] = $row;
         }
+
+        $this->assertCount(11, $rows);
     }
 }

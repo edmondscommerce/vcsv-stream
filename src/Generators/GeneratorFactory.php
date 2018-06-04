@@ -11,6 +11,11 @@ class GeneratorFactory
      */
     private static $faker;
 
+    public static function setup(): void
+    {
+        self::$faker = Faker\Factory::create();
+    }
+
     public static function createFixedValue($value): GeneratorInterface
     {
         $fixedValue = new FixedValue();
@@ -22,10 +27,6 @@ class GeneratorFactory
 
     public static function createFakerValue(string $property = 'text', bool $isUnique = false): GeneratorInterface
     {
-        if (null === self::$faker) {
-            self::$faker = Faker\Factory::create();
-        }
-
         $fakerValue = new FakerValue(self::$faker);
 
         $fakerValue

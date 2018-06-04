@@ -2,17 +2,32 @@
 
 namespace BenRowan\VCsvStream;
 
+use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
+use BenRowan\VCsvStream\Generators\GeneratorFactory;
+use BenRowan\VCsvStream\Rows\Header;
+use BenRowan\VCsvStream\Rows\Record;
+
 class VCsvStream
 {
     private const USER_ROOT = 0;
 
     private const GROUP_ROOT = 0;
 
-    private const MODE = 0666;
+    private const DEFAULT_MODE = 0666;
+
+    private const DEFAULT_DELIMITER = ',';
+
+    private const DEFAULT_ENCLOSURE = '"';
+
+    private const DEFAULT_NEWLINE = "\n";
 
     private static $startTime;
 
     private static $header;
+
+    private static $currentRecord;
+
+    private static $records = [];
 
     /**
      * Initialise VCsvStream.
@@ -21,7 +36,12 @@ class VCsvStream
      */
     public static function setup(): void
     {
-        self::$startTime = time();
+        self::$startTime     = time();
+        self::$header        = null;
+        self::$currentRecord = 0;
+        self::$records       = [];
+
+        GeneratorFactory::setup();
 
         VCsvStreamWrapper::register();
     }
@@ -41,7 +61,7 @@ class VCsvStream
         $stat = [
             'dev'     => 0,
             'ino'     => 0,
-            'mode'    => self::MODE,
+            'mode'    => self::DEFAULT_MODE,
             'nlink'   => 0,
             'uid'     => self::getUid(),
             'gid'     => self::getGid(),
@@ -60,8 +80,61 @@ class VCsvStream
         );
     }
 
-    public static function addHeader(VCsvStreamHeader $header)
+    public static function addHeader(Header $header): void
     {
         self::$header = $header;
+    }
+
+    public static function hasHeader(): bool
+    {
+        return null !== self::$header;
+    }
+
+    public static function getHeader(): Header
+    {
+        return self::$header;
+    }
+
+    public static function addRecord(Record $record): void
+    {
+        self::$records[] = $record;
+    }
+
+    public static function hasRecords(): bool
+    {
+        return \count(self::$records) !== self::$currentRecord;
+    }
+
+    /**
+     * @return Record
+     * @throws VCsvStreamException
+     */
+    public static function currentRecord(): Record
+    {
+        if (! self::hasRecords()) {
+            throw new VCsvStreamException('No record available.');
+        }
+
+        return self::$records[self::$currentRecord];
+    }
+
+    public static function nextRecord(): void
+    {
+        self::$currentRecord++;
+    }
+
+    public static function getDelimiter(): string
+    {
+        return self::DEFAULT_DELIMITER;
+    }
+
+    public static function getEnclosure(): string
+    {
+        return self::DEFAULT_ENCLOSURE;
+    }
+
+    public static function getNewline(): string
+    {
+        return self::DEFAULT_NEWLINE;
     }
 }
