@@ -8,6 +8,12 @@ use BenRowan\VCsvStream\Rows\RowInterface;
 
 class VCsvStream
 {
+    public const CONFIG_DELIMITER = 'delimiter';
+
+    public const CONFIG_ENCLOSURE = 'enclosure';
+
+    public const CONFIG_NEWLINE = 'newline';
+
     private const USER_ROOT = 0;
 
     private const GROUP_ROOT = 0;
@@ -20,6 +26,8 @@ class VCsvStream
 
     private const DEFAULT_NEWLINE = "\n";
 
+    private static $config = [];
+
     private static $startTime;
 
     private static $header;
@@ -31,10 +39,12 @@ class VCsvStream
     /**
      * Initialise VCsvStream.
      *
-     * @throws Exceptions\VCsvStreamException
+     * @param array $config
+     * @throws VCsvStreamException
      */
-    public static function setup(): void
+    public static function setup(array $config): void
     {
+        self::$config        = $config;
         self::$startTime     = time();
         self::$header        = null;
         self::$currentRecord = 0;
@@ -137,16 +147,28 @@ class VCsvStream
 
     public static function getDelimiter(): string
     {
+        if (isset(self::$config[self::CONFIG_DELIMITER])) {
+            return self::$config[self::CONFIG_DELIMITER];
+        }
+
         return self::DEFAULT_DELIMITER;
     }
 
     public static function getEnclosure(): string
     {
+        if (isset(self::$config[self::CONFIG_ENCLOSURE])) {
+            return self::$config[self::CONFIG_ENCLOSURE];
+        }
+
         return self::DEFAULT_ENCLOSURE;
     }
 
     public static function getNewline(): string
     {
+        if (isset(self::$config[self::CONFIG_NEWLINE])) {
+            return self::$config[self::CONFIG_NEWLINE];
+        }
+
         return self::DEFAULT_NEWLINE;
     }
 }
