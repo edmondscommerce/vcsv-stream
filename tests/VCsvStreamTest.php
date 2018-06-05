@@ -3,6 +3,7 @@
 namespace BenRowan\VCsvStream\Test;
 
 use BenRowan\VCsvStream\Rows\Header;
+use BenRowan\VCsvStream\Rows\NoHeader;
 use BenRowan\VCsvStream\Rows\Record;
 use BenRowan\VCsvStream\VCsvStream;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +21,8 @@ class VCsvStreamTest extends TestCase
     {
         VCsvStream::setup();
 
-        $header = new Header();
+//        $header = new Header();
+        $header = new NoHeader();
 
         $header
             ->addValueColumn(self::HEADER_1, 1)
@@ -60,6 +62,6 @@ class VCsvStreamTest extends TestCase
             $rows[] = $row;
         }
 
-        $this->assertCount(10021, $rows);
+        $this->assertCount(10020, $rows);
     }
 }

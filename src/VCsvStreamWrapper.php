@@ -19,7 +19,9 @@ class VCsvStreamWrapper
     private function renderHeader(): string
     {
         if (! VCsvStream::hasHeader()) {
-            throw new VCsvStreamException('For now you have to specify a CSV header');
+            throw new VCsvStreamException(
+                'No header found. You must add a CSV header before using the stream.'
+            );
         }
 
         /** @var Header $header */
@@ -152,7 +154,7 @@ class VCsvStreamWrapper
         return \strlen($this->buffer);
     }
 
-    private function truncateBuffer(int $readSizeBytes): void
+    private function cleanBuffer(int $readSizeBytes): void
     {
         if ($readSizeBytes < $this->currentBufferSizeBytes()) {
             $this->buffer = \substr($this->buffer, $readSizeBytes);
@@ -162,7 +164,7 @@ class VCsvStreamWrapper
         $this->buffer = '';
     }
 
-    private function read(int $bytes): string
+    private function readFromBuffer(int $bytes): string
     {
         return \substr($this->buffer, 0, $bytes);
     }
@@ -180,9 +182,9 @@ class VCsvStreamWrapper
             $this->buffer .= $this->renderRecord();
         }
 
-        $content = $this->read($requestedReadSizeBytes);
+        $content = $this->readFromBuffer($requestedReadSizeBytes);
 
-        $this->truncateBuffer($requestedReadSizeBytes);
+        $this->cleanBuffer($requestedReadSizeBytes);
 
         return $content;
     }
