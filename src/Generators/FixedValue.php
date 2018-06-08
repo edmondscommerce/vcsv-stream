@@ -2,17 +2,25 @@
 
 namespace BenRowan\VCsvStream\Generators;
 
-class FixedValue implements GeneratorInterface
+final class FixedValue implements GeneratorInterface
 {
-    private $value = '';
+    private $value;
 
-    public function setValue($value): self
+    /**
+     * Create a fixed value generator.
+     *
+     * @param mixed $value Anything which can be cast to a string.
+     */
+    public function __construct($value)
     {
         $this->value = $value;
-
-        return $this;
     }
 
+    /**
+     * Generate a fixed value.
+     *
+     * @return string
+     */
     public function generate(): string
     {
         return (string) $this->value;

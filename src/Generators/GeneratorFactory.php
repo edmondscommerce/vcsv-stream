@@ -16,13 +16,18 @@ class GeneratorFactory
         self::$faker = Faker\Factory::create();
     }
 
+    /**
+     *
+     *
+     * @param $value
+     *
+     * @return GeneratorInterface
+     *
+     * @throws \BenRowan\VCsvStream\Exceptions\VCsvStreamException
+     */
     public static function createFixedValue($value): GeneratorInterface
     {
-        $fixedValue = new FixedValue();
-
-        $fixedValue->setValue($value);
-
-        return $fixedValue;
+        return new FixedValue($value);
     }
 
     public static function createFakerValue(string $property = 'text', bool $isUnique = false): GeneratorInterface
