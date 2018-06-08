@@ -4,42 +4,26 @@ namespace BenRowan\VCsvStream\Generators;
 
 use Faker;
 
-class FakerValue implements GeneratorInterface
+final class FakerValue implements GeneratorInterface
 {
     /**
      * @var Faker\Generator
      */
     private $faker;
 
-    private $property = 'text';
+    /**
+     * @var string
+     */
+    private $property;
 
-    private $isUnique = false;
-
-    public function __construct(Faker\Generator $faker)
+    public function __construct(Faker\Generator $faker, string $property, bool $isUnique = false)
     {
-        $this->faker = $faker;
-    }
-
-    public function setProperty($property): self
-    {
+        $this->faker    = $isUnique ? $faker->unique() : $faker;
         $this->property = $property;
-
-        return $this;
-    }
-
-    public function setIsUnique($isUnique): self
-    {
-        $this->isUnique = $isUnique;
-
-        return $this;
     }
 
     public function generate(): string
     {
-        if ($this->isUnique) {
-            return (string) $this->faker->unique()->{$this->property};
-        }
-
         return (string) $this->faker->{$this->property};
     }
 }

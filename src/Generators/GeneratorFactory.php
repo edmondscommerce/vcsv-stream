@@ -11,33 +11,36 @@ class GeneratorFactory
      */
     private static $faker;
 
+    /**
+     * Sets up the factory.
+     */
     public static function setup(): void
     {
         self::$faker = Faker\Factory::create();
     }
 
     /**
+     * Create a fixed value generator.
      *
-     *
-     * @param $value
+     * @param mixed $value Any value which can be cast to a string.
      *
      * @return GeneratorInterface
-     *
-     * @throws \BenRowan\VCsvStream\Exceptions\VCsvStreamException
      */
     public static function createFixedValue($value): GeneratorInterface
     {
         return new FixedValue($value);
     }
 
+    /**
+     * Create a faker value generator.
+     *
+     * @param string $property The faker property to use to generate your value.
+     * @param bool $isUnique Whether you need the value to be unique.
+     *
+     * @return GeneratorInterface
+     */
     public static function createFakerValue(string $property = 'text', bool $isUnique = false): GeneratorInterface
     {
-        $fakerValue = new FakerValue(self::$faker);
-
-        $fakerValue
-            ->setProperty($property)
-            ->setIsUnique($isUnique);
-
-        return $fakerValue;
+        return new FakerValue(self::$faker, $property, $isUnique);
     }
 }
