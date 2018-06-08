@@ -11,5 +11,14 @@
             <directory suffix="Test.php">../tests/Medium</directory>
             <directory suffix="Test.php">../tests/Large</directory>
         </testsuite>
+        <testsuite name="small">
+            <directory suffix="Test.php">../tests/Small</directory>
+        </testsuite>
+        <testsuite name="medium">
+            <directory suffix="Test.php">../tests/Medium</directory>
+        </testsuite>
+        <testsuite name="large">
+            <directory suffix="Test.php">../tests/Large</directory>
+        </testsuite>
     </testsuites>
 </phpunit>
