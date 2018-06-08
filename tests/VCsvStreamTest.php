@@ -17,11 +17,27 @@ class VCsvStreamTest extends TestCase
     /**
      * @throws \BenRowan\VCsvStream\Exceptions\VCsvStreamException
      */
-    public function setUp()
+    private function setupWithHeader(): void
     {
         VCsvStream::setup();
 
-//        $header = new Header();
+        $header = new Header();
+
+        $header
+            ->addValueColumn(self::HEADER_1, 1)
+            ->addFakerColumn(self::HEADER_2, 'randomNumber', true)
+            ->addColumn(self::HEADER_3);
+
+        VCsvStream::addHeader($header);
+    }
+
+    /**
+     * @throws \BenRowan\VCsvStream\Exceptions\VCsvStreamException
+     */
+    private function setupWithNoHeader(): void
+    {
+        VCsvStream::setup();
+
         $header = new NoHeader();
 
         $header
@@ -36,9 +52,48 @@ class VCsvStreamTest extends TestCase
      * Run the code...
      *
      * @test
+     * @throws \BenRowan\VCsvStream\Exceptions\VCsvStreamException
      */
     public function iCanGetDataFromStream(): void
     {
+        $this->setupWithHeader();
+
+        $records = [];
+
+        $records[] = (new Record(10))
+            ->addValueColumn(self::HEADER_2, 2)
+            ->addFakerColumn(self::HEADER_3, 'randomNumber', false);
+
+        $records[] = (new Record(10))
+            ->addValueColumn(self::HEADER_2, 3)
+            ->addFakerColumn(self::HEADER_3, 'text', false);
+
+        $records[] = (new Record(10000))
+            ->addValueColumn(self::HEADER_2, 4)
+            ->addFakerColumn(self::HEADER_3, 'ipv4', false);
+
+        VCsvStream::addRecords($records);
+
+        $vCsv = new \SplFileObject('vcsv://fixture.csv');
+
+        $rows = [];
+        while ($row = $vCsv->fgetcsv()) {
+            $rows[] = $row;
+        }
+
+        $this->assertCount(10021, $rows);
+    }
+
+    /**
+     * Run the code...
+     *
+     * @test
+     * @throws \BenRowan\VCsvStream\Exceptions\VCsvStreamException
+     */
+    public function iCanGetDataFromStreamWithNoHeader(): void
+    {
+        $this->setupWithNoHeader();
+
         $records = [];
 
         $records[] = (new Record(10))

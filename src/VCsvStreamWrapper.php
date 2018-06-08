@@ -2,200 +2,88 @@
 
 namespace BenRowan\VCsvStream;
 
+use BenRowan\VCsvStream\Buffer\Buffer;
 use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
-use BenRowan\VCsvStream\Rows\Header;
-use BenRowan\VCsvStream\Rows\Record;
+use BenRowan\VCsvStream\Renderer\Renderer;
+use BenRowan\VCsvStream\Stream\Manager;
 
 class VCsvStreamWrapper
 {
-    private const PROTOCOL = 'vcsv';
+    private $buffer;
 
-    private $buffer = '';
+    private $renderer;
 
-    /**
-     * @return string
-     * @throws VCsvStreamException
-     */
-    private function renderHeader(): string
+    public function __construct()
     {
-        if (! VCsvStream::hasHeader()) {
-            throw new VCsvStreamException(
-                'No header found. You must add a CSV header before using the stream.'
-            );
-        }
-
-        /** @var Header $header */
-        $header = VCsvStream::getHeader();
-
-        if ($header->isFullyRendered()) {
-            return '';
-        }
-
-        $renderedRow = $this->renderRow($header->getColumnNames());
-
-        $header->markRowRendered();
-
-        return $renderedRow;
+        $this->buffer   = new Buffer();
+        $this->renderer = new Renderer();
     }
 
     /**
-     * Hierarchy:
+     * Register this stream wrapper for the vcsv protocol.
      *
-     *  - Record column generator
-     *  - Header column generator
-     *  - Generic text generator
-     *
-     * @return string
-     * @throws VCsvStreamException
-     */
-    private function renderRecord(): string
-    {
-        if (! VCsvStream::hasRecords()) {
-            return '';
-        }
-
-        /** @var Record $record */
-        $record = VCsvStream::currentRecord();
-
-        /** @var Header $header */
-        $header = VCsvStream::getHeader();
-
-        $row = [];
-
-        foreach ($header->getColumnNames() as $columnName) {
-
-            if ($record->hasColumnGenerator($columnName)) {
-                $row[] = $record->getColumnGenerator($columnName)->generate();
-                continue;
-            }
-
-            if ($header->hasColumnGenerator($columnName)) {
-                $row[] = $header->getColumnGenerator($columnName)->generate();
-                continue;
-            }
-
-            throw new VCsvStreamException("No generator found for column '$columnName'");
-        }
-
-        $renderedRow = $this->renderRow($row);
-
-        $record->markRowRendered();
-
-        if ($record->isFullyRendered()) {
-            VCsvStream::nextRecord();
-        }
-
-        return $renderedRow;
-    }
-
-    private function renderRow(array $columns): string
-    {
-        $row = implode(
-            VCsvStream::getDelimiter(),
-            array_map(
-                function (string $value) {
-                    if (is_numeric($value)) {
-                        return (string) $value;
-                    }
-
-                    return VCsvStream::getEnclosure() . $value . VCsvStream::getEnclosure();
-                },
-                $columns
-            )
-        );
-
-        return $row . VCsvStream::getNewline();
-    }
-
-    private static function isStreamRegistered(): bool
-    {
-        return \in_array(self::PROTOCOL, \stream_get_wrappers(), true);
-    }
-
-    /**
-     * @throws VCsvStreamException
-     */
-    private static function registerStream(): void
-    {
-        if (! stream_wrapper_register(self::PROTOCOL, self::class)) {
-            throw new VCsvStreamException('VCsvStream has already been set up.');
-        }
-    }
-
-    /**
-     * @throws VCsvStreamException
-     */
-    private static function unRegisterStream(): void
-    {
-        if (! stream_wrapper_unregister(self::PROTOCOL)) {
-            throw new VCsvStreamException('Unable to unregister the ' . self::PROTOCOL . ' stream wrapper');
-        }
-    }
-
-    /**
      * @throws VCsvStreamException
      */
     public static function register(): void
     {
-        if (self::isStreamRegistered()) {
-            self::unRegisterStream();
+        if (Manager::isStreamRegistered()) {
+            Manager::unRegisterStream();
         }
 
-        self::registerStream();
+        Manager::registerStream();
     }
 
+    /**
+     * Pretend we did something.
+     *
+     * @return bool
+     */
     public function stream_open(): bool
     {
         return true;
     }
 
-    private function currentBufferSizeBytes(): int
-    {
-        return \strlen($this->buffer);
-    }
-
-    private function cleanBuffer(int $readSizeBytes): void
-    {
-        if ($readSizeBytes < $this->currentBufferSizeBytes()) {
-            $this->buffer = \substr($this->buffer, $readSizeBytes);
-            return;
-        }
-
-        $this->buffer = '';
-    }
-
-    private function readFromBuffer(int $bytes): string
-    {
-        return \substr($this->buffer, 0, $bytes);
-    }
-
     /**
-     * @param int $requestedReadSizeBytes
+     * Generates a CSV file stream in $readSizeInBytes chunks.
+     *
+     * @param int $readSizeInBytes
+     *
      * @return string
+     *
      * @throws VCsvStreamException
      */
-    public function stream_read(int $requestedReadSizeBytes): string
+    public function stream_read(int $readSizeInBytes): string
     {
-        $this->buffer .= $this->renderHeader();
+        $this->buffer->add($this->renderer->renderHeader());
 
-        while (VCsvStream::hasRecords() && $requestedReadSizeBytes > $this->currentBufferSizeBytes()) {
-            $this->buffer .= $this->renderRecord();
+        while (VCsvStream::hasRecords() && $readSizeInBytes > $this->buffer->currentSizeInBytes()) {
+            $this->buffer->add($this->renderer->renderRecord());
         }
 
-        $content = $this->readFromBuffer($requestedReadSizeBytes);
+        $content = $this->buffer->read($readSizeInBytes);
 
-        $this->cleanBuffer($requestedReadSizeBytes);
+        $this->buffer->clean($readSizeInBytes);
 
         return $content;
     }
 
+    /**
+     * Decides when the stream has been consumed.
+     *
+     * @return bool
+     */
     public function stream_eof(): bool
     {
         return (VCsvStream::hasHeader() && VCsvStream::getHeader()->isFullyRendered())
             && ! VCsvStream::hasRecords()
-            && '' === $this->buffer;
+            && 0 === $this->buffer->currentSizeInBytes();
     }
 
+    /**
+     * Provides (fake) file stats.
+     *
+     * @return array
+     */
     public function url_stat(): array
     {
         return VCsvStream::stat();

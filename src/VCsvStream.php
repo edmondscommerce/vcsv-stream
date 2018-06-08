@@ -8,11 +8,19 @@ use BenRowan\VCsvStream\Rows\RowInterface;
 
 class VCsvStream
 {
+    /**
+     * Constants used as configuration keys.
+     */
+
     public const CONFIG_DELIMITER = 'delimiter';
 
     public const CONFIG_ENCLOSURE = 'enclosure';
 
     public const CONFIG_NEWLINE = 'newline';
+
+    /**
+     * Default configuration values.
+     */
 
     private const USER_ROOT = 0;
 
@@ -26,23 +34,39 @@ class VCsvStream
 
     private const DEFAULT_NEWLINE = "\n";
 
+    /**
+     * @var array All VCsvStream configuration values.
+     */
     private static $config = [];
 
+    /**
+     * @var int Used to provide the CSV files atime, mtime and ctime.
+     */
     private static $startTime;
 
+    /**
+     * @var RowInterface The header to be used for the CSV file.
+     */
     private static $header;
 
-    private static $currentRecord;
-
+    /**
+     * @var RowInterface[] All records to be added to the CSV file.
+     */
     private static $records = [];
+
+    /**
+     * @var int Pointer to the current record to be rendered.
+     */
+    private static $currentRecord;
 
     /**
      * Initialise VCsvStream.
      *
-     * @param array $config
+     * @param array $config All VCsvStream configuration values.
+     *
      * @throws VCsvStreamException
      */
-    public static function setup(array $config): void
+    public static function setup(array $config = []): void
     {
         self::$config        = $config;
         self::$startTime     = time();
@@ -55,16 +79,25 @@ class VCsvStream
         VCsvStreamWrapper::register();
     }
 
+    /**
+     * @return int Get's the current processes UID if possible. Returns 0 (root) if not.
+     */
     private static function getUid(): int
     {
         return \function_exists('posix_getuid') ? posix_getuid() : self::USER_ROOT;
     }
 
+    /**
+     * @return int Get's the current processes GID if possible. Returns 0 (root) if not.
+     */
     private static function getGid(): int
     {
         return \function_exists('posix_getgid') ? posix_getgid() : self::GROUP_ROOT;
     }
 
+    /**
+     * @return array Returns some fake stats for the CSV file.
+     */
     public static function stat(): array
     {
         $stat = [
@@ -89,23 +122,32 @@ class VCsvStream
         );
     }
 
+    /**
+     * @param RowInterface $header Add a header to be rendered.
+     */
     public static function addHeader(RowInterface $header): void
     {
         self::$header = $header;
     }
 
+    /**
+     * @return bool Confirm a header has been set.
+     */
     public static function hasHeader(): bool
     {
         return null !== self::$header;
     }
 
+    /**
+     * @return RowInterface Get the current header.
+     */
     public static function getHeader(): RowInterface
     {
         return self::$header;
     }
 
     /**
-     * @param RowInterface $record
+     * @param RowInterface $record Add a record to be rendered.
      */
     public static function addRecord(RowInterface $record): void
     {
@@ -113,7 +155,7 @@ class VCsvStream
     }
 
     /**
-     * @param RowInterface[] $records
+     * @param RowInterface[] $records Add a set of records to be rendered.
      */
     public static function addRecords(array $records): void
     {
@@ -122,13 +164,19 @@ class VCsvStream
         }
     }
 
+    /**
+     * @return bool Confirm one or more records have been set.
+     */
     public static function hasRecords(): bool
     {
         return \count(self::$records) !== self::$currentRecord;
     }
 
     /**
+     * Get the current record.
+     *
      * @return RowInterface
+     *
      * @throws VCsvStreamException
      */
     public static function currentRecord(): RowInterface
@@ -140,11 +188,17 @@ class VCsvStream
         return self::$records[self::$currentRecord];
     }
 
+    /**
+     * Move the record pointer to the next record.
+     */
     public static function nextRecord(): void
     {
         self::$currentRecord++;
     }
 
+    /**
+     * @return string Get the currently configured delimiter character.
+     */
     public static function getDelimiter(): string
     {
         if (isset(self::$config[self::CONFIG_DELIMITER])) {
@@ -154,6 +208,9 @@ class VCsvStream
         return self::DEFAULT_DELIMITER;
     }
 
+    /**
+     * @return string Get the currently configured enclosure character.
+     */
     public static function getEnclosure(): string
     {
         if (isset(self::$config[self::CONFIG_ENCLOSURE])) {
@@ -163,6 +220,9 @@ class VCsvStream
         return self::DEFAULT_ENCLOSURE;
     }
 
+    /**
+     * @return string Get the currently configured newline character.
+     */
     public static function getNewline(): string
     {
         if (isset(self::$config[self::CONFIG_NEWLINE])) {
