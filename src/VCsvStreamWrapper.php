@@ -91,7 +91,7 @@ class VCsvStreamWrapper
     {
         $streamState = VCsvStream::getState();
 
-        return ($streamState->hasHeader() && $streamState->getHeader()->isFullyRendered())
+        return $streamState->getHeader()->isFullyRendered()
             && ! $streamState->hasRecords()
             && 0 === $this->buffer->currentSizeInBytes();
     }
