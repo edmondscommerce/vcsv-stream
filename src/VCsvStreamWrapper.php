@@ -4,19 +4,22 @@ namespace BenRowan\VCsvStream;
 
 use BenRowan\VCsvStream\Buffer\Buffer;
 use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
-use BenRowan\VCsvStream\Renderers\Renderer;
+use BenRowan\VCsvStream\Renderers;
 use BenRowan\VCsvStream\Stream;
 
 class VCsvStreamWrapper
 {
     private $buffer;
 
-    private $renderer;
+    private $headerRenderer;
+
+    private $recordRenderer;
 
     public function __construct()
     {
-        $this->buffer   = new Buffer();
-        $this->renderer = new Renderer();
+        $this->buffer         = new Buffer();
+        $this->headerRenderer = new Renderers\Header();
+        $this->recordRenderer = new Renderers\Record();
     }
 
     /**
@@ -54,10 +57,10 @@ class VCsvStreamWrapper
      */
     public function stream_read(int $readSizeInBytes): string
     {
-        $this->buffer->add($this->renderer->renderHeader());
+        $this->buffer->add($this->headerRenderer->render());
 
         while (VCsvStream::hasRecords() && $readSizeInBytes > $this->buffer->currentSizeInBytes()) {
-            $this->buffer->add($this->renderer->renderRecord());
+            $this->buffer->add($this->recordRenderer->render());
         }
 
         $content = $this->buffer->read($readSizeInBytes);
