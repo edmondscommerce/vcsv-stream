@@ -39,7 +39,7 @@ class VCsvStream
 
         GeneratorFactory::setup();
 
-        VCsvStreamWrapper::register();
+        VCsvStreamWrapper::setup();
     }
 
     /**

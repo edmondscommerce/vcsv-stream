@@ -23,11 +23,11 @@ class VCsvStreamWrapper
     }
 
     /**
-     * Register this stream wrapper for the vcsv protocol.
+     * Register this stream wrapper with the vcsv protocol.
      *
      * @throws VCsvStreamException
      */
-    public static function register(): void
+    public static function setup(): void
     {
         if (Stream\Manager::streamIsRegistered()) {
             return;
