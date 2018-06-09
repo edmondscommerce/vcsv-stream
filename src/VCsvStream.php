@@ -5,37 +5,24 @@ namespace BenRowan\VCsvStream;
 use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
 use BenRowan\VCsvStream\Generators\GeneratorFactory;
 use BenRowan\VCsvStream\Rows\RowInterface;
-use BenRowan\VCsvStream\Stream\Config;
-use BenRowan\VCsvStream\Stream\ConfigInterface;
-use BenRowan\VCsvStream\Stream\File;
-use BenRowan\VCsvStream\Stream\FileInterface;
+use BenRowan\VCsvStream\Stream;
 
 class VCsvStream
 {
     /**
-     * @var RowInterface The header to be used for the CSV file.
-     */
-    private static $header;
-
-    /**
-     * @var RowInterface[] All records to be added to the CSV file.
-     */
-    private static $records = [];
-
-    /**
-     * @var int Pointer to the current record to be rendered.
-     */
-    private static $currentRecord;
-
-    /**
-     * @var FileInterface
+     * @var Stream\FileInterface
      */
     private static $file;
 
     /**
-     * @var ConfigInterface
+     * @var Stream\ConfigInterface
      */
     private static $config;
+
+    /**
+     * @var Stream\StateInterface
+     */
+    private static $state;
 
     /**
      * Initialise VCsvStream.
@@ -46,12 +33,9 @@ class VCsvStream
      */
     public static function setup(array $config = []): void
     {
-        self::$file   = new File();
-        self::$config = new Config($config);
-
-        self::$header        = null;
-        self::$currentRecord = 0;
-        self::$records       = [];
+        self::$file   = new Stream\File();
+        self::$config = new Stream\Config($config);
+        self::$state  = new Stream\State();
 
         GeneratorFactory::setup();
 
@@ -71,7 +55,7 @@ class VCsvStream
      */
     public static function addHeader(RowInterface $header): void
     {
-        self::$header = $header;
+        self::$state->addHeader($header);
     }
 
     /**
@@ -79,7 +63,7 @@ class VCsvStream
      */
     public static function hasHeader(): bool
     {
-        return null !== self::$header;
+        return self::$state->hasHeader();
     }
 
     /**
@@ -87,7 +71,7 @@ class VCsvStream
      */
     public static function getHeader(): RowInterface
     {
-        return self::$header;
+        return self::$state->getHeader();
     }
 
     /**
@@ -95,7 +79,7 @@ class VCsvStream
      */
     public static function addRecord(RowInterface $record): void
     {
-        self::$records[] = $record;
+        self::$state->addRecord($record);
     }
 
     /**
@@ -103,9 +87,7 @@ class VCsvStream
      */
     public static function addRecords(array $records): void
     {
-        foreach ($records as $record) {
-            self::addRecord($record);
-        }
+        self::$state->addRecords($records);
     }
 
     /**
@@ -113,7 +95,7 @@ class VCsvStream
      */
     public static function hasRecords(): bool
     {
-        return \count(self::$records) !== self::$currentRecord;
+        return self::$state->hasRecords();
     }
 
     /**
@@ -125,11 +107,7 @@ class VCsvStream
      */
     public static function currentRecord(): RowInterface
     {
-        if (! self::hasRecords()) {
-            throw new VCsvStreamException('No record available.');
-        }
-
-        return self::$records[self::$currentRecord];
+        return self::$state->currentRecord();
     }
 
     /**
@@ -137,7 +115,7 @@ class VCsvStream
      */
     public static function nextRecord(): void
     {
-        self::$currentRecord++;
+        self::$state->nextRecord();
     }
 
     /**
