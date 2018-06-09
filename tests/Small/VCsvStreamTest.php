@@ -1,6 +1,6 @@
 <?php
 
-namespace BenRowan\VCsvStream\Test;
+namespace BenRowan\VCsvStream\Tests\Small;
 
 use BenRowan\VCsvStream\Rows\Header;
 use BenRowan\VCsvStream\Rows\NoHeader;
