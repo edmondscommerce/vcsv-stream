@@ -2,7 +2,7 @@
 
 namespace BenRowan\VCsvStream\Stream;
 
-class File
+class File implements FileInterface
 {
     private const FILE_USER_ROOT  = 0;
 
