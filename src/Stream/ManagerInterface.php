@@ -6,9 +6,7 @@ interface ManagerInterface
 {
     public const PROTOCOL = 'vcsv';
 
-    public static function isStreamRegistered(): bool;
+    public static function streamIsRegistered(): bool;
 
     public static function registerStream(): void;
-
-    public static function unRegisterStream(): void;
 }

@@ -4,8 +4,8 @@ namespace BenRowan\VCsvStream;
 
 use BenRowan\VCsvStream\Buffer\Buffer;
 use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
-use BenRowan\VCsvStream\Renderer\Renderer;
-use BenRowan\VCsvStream\Stream\Manager;
+use BenRowan\VCsvStream\Renderers\Renderer;
+use BenRowan\VCsvStream\Stream;
 
 class VCsvStreamWrapper
 {
@@ -26,11 +26,11 @@ class VCsvStreamWrapper
      */
     public static function register(): void
     {
-        if (Manager::isStreamRegistered()) {
-            Manager::unRegisterStream();
+        if (Stream\Manager::streamIsRegistered()) {
+            return;
         }
 
-        Manager::registerStream();
+        Stream\Manager::registerStream();
     }
 
     /**
