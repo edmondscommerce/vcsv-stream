@@ -5,6 +5,7 @@ namespace BenRowan\VCsvStream;
 use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
 use BenRowan\VCsvStream\Generators\GeneratorFactory;
 use BenRowan\VCsvStream\Rows\RowInterface;
+use BenRowan\VCsvStream\Stream\File;
 
 class VCsvStream
 {
@@ -22,12 +23,6 @@ class VCsvStream
      * Default configuration values.
      */
 
-    private const USER_ROOT = 0;
-
-    private const GROUP_ROOT = 0;
-
-    private const DEFAULT_MODE = 0666;
-
     private const DEFAULT_DELIMITER = ',';
 
     private const DEFAULT_ENCLOSURE = '"';
@@ -38,11 +33,6 @@ class VCsvStream
      * @var array All VCsvStream configuration values.
      */
     private static $config = [];
-
-    /**
-     * @var int Used to provide the CSV files atime, mtime and ctime.
-     */
-    private static $startTime;
 
     /**
      * @var RowInterface The header to be used for the CSV file.
@@ -60,6 +50,11 @@ class VCsvStream
     private static $currentRecord;
 
     /**
+     * @var File
+     */
+    private static $file;
+
+    /**
      * Initialise VCsvStream.
      *
      * @param array $config All VCsvStream configuration values.
@@ -68,8 +63,9 @@ class VCsvStream
      */
     public static function setup(array $config = []): void
     {
+        self::$file = new File();
+
         self::$config        = $config;
-        self::$startTime     = time();
         self::$header        = null;
         self::$currentRecord = 0;
         self::$records       = [];
@@ -80,46 +76,11 @@ class VCsvStream
     }
 
     /**
-     * @return int Get's the current processes UID if possible. Returns 0 (root) if not.
-     */
-    private static function getUid(): int
-    {
-        return \function_exists('posix_getuid') ? posix_getuid() : self::USER_ROOT;
-    }
-
-    /**
-     * @return int Get's the current processes GID if possible. Returns 0 (root) if not.
-     */
-    private static function getGid(): int
-    {
-        return \function_exists('posix_getgid') ? posix_getgid() : self::GROUP_ROOT;
-    }
-
-    /**
      * @return array Returns some fake stats for the CSV file.
      */
     public static function stat(): array
     {
-        $stat = [
-            'dev'     => 0,
-            'ino'     => 0,
-            'mode'    => self::DEFAULT_MODE,
-            'nlink'   => 0,
-            'uid'     => self::getUid(),
-            'gid'     => self::getGid(),
-            'rdev'    => 0,
-            'size'    => 0,
-            'atime'   => self::$startTime,
-            'mtime'   => self::$startTime,
-            'ctime'   => self::$startTime,
-            'blksize' => -1,
-            'blocks'  => -1
-        ];
-
-        return array_merge(
-            array_values($stat),
-            $stat
-        );
+        return self::$file->stat();
     }
 
     /**
