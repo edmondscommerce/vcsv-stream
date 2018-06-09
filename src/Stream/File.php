@@ -12,9 +12,15 @@ class File implements FileInterface
 
     private $time;
 
+    private $uidFuncExists;
+
+    private $gidFuncExists;
+
     public function __construct()
     {
-        $this->time = time();
+        $this->time          = \time();
+        $this->uidFuncExists = \function_exists('posix_getuid');
+        $this->gidFuncExists = \function_exists('posix_getgid');
     }
 
     /**
@@ -24,7 +30,7 @@ class File implements FileInterface
      */
     private function getUid(): int
     {
-        return \function_exists('posix_getuid') ? posix_getuid() : self::FILE_USER_ROOT;
+        return $this->uidFuncExists ? posix_getuid() : self::FILE_USER_ROOT;
     }
 
     /**
@@ -34,7 +40,7 @@ class File implements FileInterface
      */
     private function getGid(): int
     {
-        return \function_exists('posix_getgid') ? posix_getgid() : self::FILE_GROUP_ROOT;
+        return $this->gidFuncExists ? posix_getgid() : self::FILE_GROUP_ROOT;
     }
 
     /**
