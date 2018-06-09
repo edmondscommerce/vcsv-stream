@@ -8,11 +8,11 @@ use BenRowan\VCsvStream\Rows\RowInterface;
 interface StateInterface
 {
     /**
-     * Add a header to be rendered.
+     * Set the header to be rendered.
      *
      * @param RowInterface $header
      */
-    public function addHeader(RowInterface $header): void;
+    public function setHeader(RowInterface $header): void;
 
     /**
      * Confirm a header has been set.

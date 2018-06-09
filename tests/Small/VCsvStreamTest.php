@@ -28,7 +28,7 @@ class VCsvStreamTest extends TestCase
             ->addFakerColumn(self::HEADER_2, 'randomNumber', true)
             ->addColumn(self::HEADER_3);
 
-        VCsvStream::addHeader($header);
+        VCsvStream::setHeader($header);
     }
 
     /**
@@ -45,7 +45,7 @@ class VCsvStreamTest extends TestCase
             ->addFakerColumn(self::HEADER_2, 'randomNumber', true)
             ->addColumn(self::HEADER_3);
 
-        VCsvStream::addHeader($header);
+        VCsvStream::setHeader($header);
     }
 
     /**

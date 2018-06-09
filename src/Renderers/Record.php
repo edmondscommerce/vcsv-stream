@@ -3,7 +3,7 @@
 namespace BenRowan\VCsvStream\Renderers;
 
 use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
-use BenRowan\VCsvStream\VCsvStream;
+use BenRowan\VCsvStream\Stream;
 use BenRowan\VCsvStream\Rows\Header as HeaderRow;
 use BenRowan\VCsvStream\Rows\Record as RecordRow;
 
@@ -17,21 +17,24 @@ class Record extends AbstractRowRenderer
      *  - (1st) Record generator
      *  - (2nd) Header generator
      *
+     * @param Stream\ConfigInterface $config
+     * @param Stream\StateInterface $streamState
+     *
      * @return string
      *
      * @throws VCsvStreamException
      */
-    public function render(): string
+    public function render(Stream\ConfigInterface $config, Stream\StateInterface $streamState): string
     {
-        if (! VCsvStream::hasRecords()) {
+        if (! $streamState->hasRecords()) {
             return '';
         }
 
         /** @var RecordRow $record */
-        $record = VCsvStream::currentRecord();
+        $record = $streamState->currentRecord();
 
         /** @var HeaderRow $header */
-        $header = VCsvStream::getHeader();
+        $header = $streamState->getHeader();
 
         $row = [];
 
@@ -50,12 +53,12 @@ class Record extends AbstractRowRenderer
             throw new VCsvStreamException("No generator found for column '$columnName'");
         }
 
-        $renderedRow = $this->renderRow($row);
+        $renderedRow = $this->renderRow($config, $row);
 
         $record->markRowRendered();
 
         if ($record->isFullyRendered()) {
-            VCsvStream::nextRecord();
+            $streamState->nextRecord();
         }
 
         return $renderedRow;

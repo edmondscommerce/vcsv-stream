@@ -27,7 +27,7 @@ class State implements StateInterface
      *
      * @param RowInterface $header
      */
-    public function addHeader(RowInterface $header): void
+    public function setHeader(RowInterface $header): void
     {
         $this->header = $header;
     }

@@ -2,33 +2,34 @@
 
 namespace BenRowan\VCsvStream\Renderers;
 
-use BenRowan\VCsvStream\VCsvStream;
+use BenRowan\VCsvStream\Stream;
 
 abstract class AbstractRowRenderer implements RowRendererInterface
 {
     /**
      * Handles the transformation of column data into a CSV row string.
      *
+     * @param Stream\ConfigInterface $config
      * @param array $columns
      *
      * @return string
      */
-    protected function renderRow(array $columns): string
+    protected function renderRow(Stream\ConfigInterface $config, array $columns): string
     {
         $row = implode(
-            VCsvStream::getDelimiter(),
+            $config->getDelimiter(),
             array_map(
-                function (string $value) {
+                function (string $value) use ($config) {
                     if (is_numeric($value)) {
                         return (string) $value;
                     }
 
-                    return VCsvStream::getEnclosure() . $value . VCsvStream::getEnclosure();
+                    return $config->getEnclosure() . $value . $config->getEnclosure();
                 },
                 $columns
             )
         );
 
-        return $row . VCsvStream::getNewline();
+        return $row . $config->getNewline();
     }
 }

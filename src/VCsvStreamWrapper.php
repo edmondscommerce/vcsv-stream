@@ -57,10 +57,13 @@ class VCsvStreamWrapper
      */
     public function stream_read(int $readSizeInBytes): string
     {
-        $this->buffer->add($this->headerRenderer->render());
+        $config      = VCsvStream::getConfig();
+        $streamState = VCsvStream::getState();
 
-        while (VCsvStream::hasRecords() && $readSizeInBytes > $this->buffer->currentSizeInBytes()) {
-            $this->buffer->add($this->recordRenderer->render());
+        $this->buffer->add($this->headerRenderer->render($config, $streamState));
+
+        while ($streamState->hasRecords() && $readSizeInBytes > $this->buffer->currentSizeInBytes()) {
+            $this->buffer->add($this->recordRenderer->render($config, $streamState));
         }
 
         $content = $this->buffer->read($readSizeInBytes);
@@ -77,18 +80,20 @@ class VCsvStreamWrapper
      */
     public function stream_eof(): bool
     {
-        return (VCsvStream::hasHeader() && VCsvStream::getHeader()->isFullyRendered())
-            && ! VCsvStream::hasRecords()
+        $streamState = VCsvStream::getState();
+
+        return ($streamState->hasHeader() && $streamState->getHeader()->isFullyRendered())
+            && ! $streamState->hasRecords()
             && 0 === $this->buffer->currentSizeInBytes();
     }
 
     /**
-     * Provides (fake) file stats.
+     * Returns some fake stats for the CSV file.
      *
      * @return array
      */
     public function url_stat(): array
     {
-        return VCsvStream::stat();
+        return VCsvStream::getFile()->stat();
     }
 }

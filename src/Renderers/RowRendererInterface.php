@@ -2,7 +2,9 @@
 
 namespace BenRowan\VCsvStream\Renderers;
 
+use BenRowan\VCsvStream\Stream;
+
 interface RowRendererInterface
 {
-    public function render(): string;
+    public function render(Stream\ConfigInterface $config, Stream\StateInterface $streamState): string;
 }

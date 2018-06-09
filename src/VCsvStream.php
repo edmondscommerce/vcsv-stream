@@ -43,39 +43,39 @@ class VCsvStream
     }
 
     /**
-     * @return array Returns some fake stats for the CSV file.
+     * Gets the current representation of the file.
+     *
+     * @return Stream\FileInterface
      */
-    public static function stat(): array
+    public static function getFile(): Stream\FileInterface
     {
-        return self::$file->stat();
+        return self::$file;
     }
 
     /**
-     * @param RowInterface $header Add a header to be rendered.
+     * Gets the current stream state.
+     *
+     * @return Stream\StateInterface
      */
-    public static function addHeader(RowInterface $header): void
+    public static function getState(): Stream\StateInterface
     {
-        self::$state->addHeader($header);
+        return self::$state;
     }
 
     /**
-     * @return bool Confirm a header has been set.
+     * Set the header to be rendered.
+     *
+     * @param RowInterface $header
      */
-    public static function hasHeader(): bool
+    public static function setHeader(RowInterface $header): void
     {
-        return self::$state->hasHeader();
+        self::$state->setHeader($header);
     }
 
     /**
-     * @return RowInterface Get the current header.
-     */
-    public static function getHeader(): RowInterface
-    {
-        return self::$state->getHeader();
-    }
-
-    /**
-     * @param RowInterface $record Add a record to be rendered.
+     * Add a record to be rendered.
+     *
+     * @param RowInterface $record
      */
     public static function addRecord(RowInterface $record): void
     {
@@ -83,7 +83,9 @@ class VCsvStream
     }
 
     /**
-     * @param RowInterface[] $records Add a set of records to be rendered.
+     * Add a set of records to be rendered.
+     *
+     * @param RowInterface[] $records
      */
     public static function addRecords(array $records): void
     {
@@ -91,54 +93,12 @@ class VCsvStream
     }
 
     /**
-     * @return bool Confirm one or more records have been set.
-     */
-    public static function hasRecords(): bool
-    {
-        return self::$state->hasRecords();
-    }
-
-    /**
-     * Get the current record.
+     * Gets the current configuration.
      *
-     * @return RowInterface
-     *
-     * @throws VCsvStreamException
+     * @return Stream\ConfigInterface
      */
-    public static function currentRecord(): RowInterface
+    public static function getConfig(): Stream\ConfigInterface
     {
-        return self::$state->currentRecord();
-    }
-
-    /**
-     * Move the record pointer to the next record.
-     */
-    public static function nextRecord(): void
-    {
-        self::$state->nextRecord();
-    }
-
-    /**
-     * @return string Get the currently configured delimiter character.
-     */
-    public static function getDelimiter(): string
-    {
-        return self::$config->getDelimiter();
-    }
-
-    /**
-     * @return string Get the currently configured enclosure character.
-     */
-    public static function getEnclosure(): string
-    {
-        return self::$config->getEnclosure();
-    }
-
-    /**
-     * @return string Get the currently configured newline character.
-     */
-    public static function getNewline(): string
-    {
-        return self::$config->getNewline();
+        return self::$config;
     }
 }

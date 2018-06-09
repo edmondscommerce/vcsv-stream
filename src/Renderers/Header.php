@@ -3,7 +3,7 @@
 namespace BenRowan\VCsvStream\Renderers;
 
 use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
-use BenRowan\VCsvStream\VCsvStream;
+use BenRowan\VCsvStream\Stream;
 use BenRowan\VCsvStream\Rows\Header as HeaderRow;
 
 class Header extends AbstractRowRenderer
@@ -11,26 +11,29 @@ class Header extends AbstractRowRenderer
     /**
      * Renders the current header data as a CSV row string.
      *
+     * @param Stream\ConfigInterface $config
+     * @param Stream\StateInterface $streamState
+     *
      * @return string
      *
      * @throws VCsvStreamException
      */
-    public function render(): string
+    public function render(Stream\ConfigInterface $config, Stream\StateInterface $streamState): string
     {
-        if (! VCsvStream::hasHeader()) {
+        if (! $streamState->hasHeader()) {
             throw new VCsvStreamException(
                 'No header found. You must add a CSV header before using the stream.'
             );
         }
 
         /** @var HeaderRow $header */
-        $header = VCsvStream::getHeader();
+        $header = $streamState->getHeader();
 
         if ($header->isFullyRendered()) {
             return '';
         }
 
-        $renderedRow = $this->renderRow($header->getColumnNames());
+        $renderedRow = $this->renderRow($config, $header->getColumnNames());
 
         $header->markRowRendered();
 
