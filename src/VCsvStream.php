@@ -53,6 +53,16 @@ class VCsvStream
     }
 
     /**
+     * Gets the current configuration.
+     *
+     * @return Stream\ConfigInterface
+     */
+    public static function getConfig(): Stream\ConfigInterface
+    {
+        return self::$config;
+    }
+
+    /**
      * Gets the current stream state.
      *
      * @return Stream\StateInterface
@@ -90,15 +100,5 @@ class VCsvStream
     public static function addRecords(array $records): void
     {
         self::$state->addRecords($records);
-    }
-
-    /**
-     * Gets the current configuration.
-     *
-     * @return Stream\ConfigInterface
-     */
-    public static function getConfig(): Stream\ConfigInterface
-    {
-        return self::$config;
     }
 }
