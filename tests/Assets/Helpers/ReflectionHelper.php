@@ -18,4 +18,9 @@ class ReflectionHelper
             throw new Exception($e->getMessage(), $e->getCode(), $e);
         }
     }
+
+    public function createReflectionClassConstant($object, string $constant): \ReflectionClassConstant
+    {
+        return new \ReflectionClassConstant($object, $constant);
+    }
 }

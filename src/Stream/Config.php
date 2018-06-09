@@ -8,11 +8,11 @@ class Config implements ConfigInterface
      * Configuration keys.
      */
 
-    public const CONFIG_DELIMITER = 'delimiter';
+    public const DELIMITER = 'delimiter';
 
-    public const CONFIG_ENCLOSURE = 'enclosure';
+    public const ENCLOSURE = 'enclosure';
 
-    public const CONFIG_NEWLINE   = 'newline';
+    public const NEWLINE   = 'newline';
 
     /**
      * Default values.
@@ -41,8 +41,8 @@ class Config implements ConfigInterface
      */
     public function getDelimiter(): string
     {
-        if (isset($this->config[self::CONFIG_DELIMITER])) {
-            return $this->config[self::CONFIG_DELIMITER];
+        if (isset($this->config[self::DELIMITER])) {
+            return $this->config[self::DELIMITER];
         }
 
         return self::DEFAULT_DELIMITER;
@@ -55,8 +55,8 @@ class Config implements ConfigInterface
      */
     public function getEnclosure(): string
     {
-        if (isset($this->config[self::CONFIG_ENCLOSURE])) {
-            return $this->config[self::CONFIG_ENCLOSURE];
+        if (isset($this->config[self::ENCLOSURE])) {
+            return $this->config[self::ENCLOSURE];
         }
 
         return self::DEFAULT_ENCLOSURE;
@@ -69,8 +69,8 @@ class Config implements ConfigInterface
      */
     public function getNewline(): string
     {
-        if (isset($this->config[self::CONFIG_NEWLINE])) {
-            return $this->config[self::CONFIG_NEWLINE];
+        if (isset($this->config[self::NEWLINE])) {
+            return $this->config[self::NEWLINE];
         }
 
         return self::DEFAULT_NEWLINE;
