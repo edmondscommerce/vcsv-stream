@@ -5,35 +5,13 @@ namespace BenRowan\VCsvStream;
 use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
 use BenRowan\VCsvStream\Generators\GeneratorFactory;
 use BenRowan\VCsvStream\Rows\RowInterface;
+use BenRowan\VCsvStream\Stream\Config;
+use BenRowan\VCsvStream\Stream\ConfigInterface;
 use BenRowan\VCsvStream\Stream\File;
+use BenRowan\VCsvStream\Stream\FileInterface;
 
 class VCsvStream
 {
-    /**
-     * Constants used as configuration keys.
-     */
-
-    public const CONFIG_DELIMITER = 'delimiter';
-
-    public const CONFIG_ENCLOSURE = 'enclosure';
-
-    public const CONFIG_NEWLINE = 'newline';
-
-    /**
-     * Default configuration values.
-     */
-
-    private const DEFAULT_DELIMITER = ',';
-
-    private const DEFAULT_ENCLOSURE = '"';
-
-    private const DEFAULT_NEWLINE = "\n";
-
-    /**
-     * @var array All VCsvStream configuration values.
-     */
-    private static $config = [];
-
     /**
      * @var RowInterface The header to be used for the CSV file.
      */
@@ -50,9 +28,14 @@ class VCsvStream
     private static $currentRecord;
 
     /**
-     * @var File
+     * @var FileInterface
      */
     private static $file;
+
+    /**
+     * @var ConfigInterface
+     */
+    private static $config;
 
     /**
      * Initialise VCsvStream.
@@ -63,9 +46,9 @@ class VCsvStream
      */
     public static function setup(array $config = []): void
     {
-        self::$file = new File();
+        self::$file   = new File();
+        self::$config = new Config($config);
 
-        self::$config        = $config;
         self::$header        = null;
         self::$currentRecord = 0;
         self::$records       = [];
@@ -162,11 +145,7 @@ class VCsvStream
      */
     public static function getDelimiter(): string
     {
-        if (isset(self::$config[self::CONFIG_DELIMITER])) {
-            return self::$config[self::CONFIG_DELIMITER];
-        }
-
-        return self::DEFAULT_DELIMITER;
+        return self::$config->getDelimiter();
     }
 
     /**
@@ -174,11 +153,7 @@ class VCsvStream
      */
     public static function getEnclosure(): string
     {
-        if (isset(self::$config[self::CONFIG_ENCLOSURE])) {
-            return self::$config[self::CONFIG_ENCLOSURE];
-        }
-
-        return self::DEFAULT_ENCLOSURE;
+        return self::$config->getEnclosure();
     }
 
     /**
@@ -186,10 +161,6 @@ class VCsvStream
      */
     public static function getNewline(): string
     {
-        if (isset(self::$config[self::CONFIG_NEWLINE])) {
-            return self::$config[self::CONFIG_NEWLINE];
-        }
-
-        return self::DEFAULT_NEWLINE;
+        return self::$config->getNewline();
     }
 }
