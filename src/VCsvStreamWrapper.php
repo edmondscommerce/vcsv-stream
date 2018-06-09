@@ -9,10 +9,19 @@ use BenRowan\VCsvStream\Stream;
 
 class VCsvStreamWrapper
 {
+    /**
+     * @var Buffer
+     */
     private $buffer;
 
+    /**
+     * @var Renderers\Header
+     */
     private $headerRenderer;
 
+    /**
+     * @var Renderers\Record
+     */
     private $recordRenderer;
 
     public function __construct()
