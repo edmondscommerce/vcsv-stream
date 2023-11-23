@@ -2,6 +2,9 @@
 
 namespace BenRowan\VCsvStream;
 
+use BenRowan\VCsvStream\Renderers\Header;
+use BenRowan\VCsvStream\Renderers\Record;
+use BenRowan\VCsvStream\Stream\Manager;
 use BenRowan\VCsvStream\Buffer\Buffer;
 use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
 use BenRowan\VCsvStream\Renderers;
@@ -9,26 +12,17 @@ use BenRowan\VCsvStream\Stream;
 
 class VCsvStreamWrapper
 {
-    /**
-     * @var Buffer
-     */
-    private $buffer;
+    private readonly Buffer $buffer;
 
-    /**
-     * @var Renderers\Header
-     */
-    private $headerRenderer;
+    private readonly Header $headerRenderer;
 
-    /**
-     * @var Renderers\Record
-     */
-    private $recordRenderer;
+    private readonly Record $recordRenderer;
 
     public function __construct()
     {
         $this->buffer         = new Buffer();
-        $this->headerRenderer = new Renderers\Header();
-        $this->recordRenderer = new Renderers\Record();
+        $this->headerRenderer = new Header();
+        $this->recordRenderer = new Record();
     }
 
     /**
@@ -38,17 +32,15 @@ class VCsvStreamWrapper
      */
     public static function setup(): void
     {
-        if (Stream\Manager::streamIsRegistered()) {
+        if (Manager::streamIsRegistered()) {
             return;
         }
 
-        Stream\Manager::registerStream();
+        Manager::registerStream();
     }
 
     /**
      * Pretend we did something.
-     *
-     * @return bool
      */
     public function stream_open(): bool
     {
@@ -58,9 +50,7 @@ class VCsvStreamWrapper
     /**
      * Generates a CSV file stream in $readSizeInBytes chunks.
      *
-     * @param int $readSizeInBytes
      *
-     * @return string
      *
      * @throws VCsvStreamException
      */
@@ -84,8 +74,6 @@ class VCsvStreamWrapper
 
     /**
      * Decides when the stream has been consumed.
-     *
-     * @return bool
      */
     public function stream_eof(): bool
     {
@@ -98,8 +86,6 @@ class VCsvStreamWrapper
 
     /**
      * Returns some fake stats for the CSV file.
-     *
-     * @return array
      */
     public function url_stat(): array
     {

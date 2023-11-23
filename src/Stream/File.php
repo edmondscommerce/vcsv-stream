@@ -10,11 +10,11 @@ class File implements FileInterface
 
     private const FILE_MODE       = 0666;
 
-    private $time;
+    private int $time;
 
-    private $uidFuncExists;
+    private bool $uidFuncExists;
 
-    private $gidFuncExists;
+    private bool $gidFuncExists;
 
     public function __construct()
     {
@@ -25,8 +25,6 @@ class File implements FileInterface
 
     /**
      * Get's the current processes UID if possible. Returns 0 (root) if not.
-     *
-     * @return int
      */
     private function getUid(): int
     {
@@ -35,8 +33,6 @@ class File implements FileInterface
 
     /**
      * Get's the current processes GID if possible. Returns 0 (root) if not.
-     *
-     * @return int
      */
     private function getGid(): int
     {
@@ -45,8 +41,6 @@ class File implements FileInterface
 
     /**
      * Returns some fake stats for the CSV file.
-     *
-     * @return array
      */
     public function stat(): array
     {

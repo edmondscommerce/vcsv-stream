@@ -9,29 +9,21 @@ interface StateInterface
 {
     /**
      * Set the header to be rendered.
-     *
-     * @param RowInterface $header
      */
     public function setHeader(RowInterface $header): void;
 
     /**
      * Confirm a header has been set.
-     *
-     * @return bool
      */
     public function hasHeader(): bool;
 
     /**
      * Get the current header.
-     *
-     * @return RowInterface
      */
     public function getHeader(): RowInterface;
 
     /**
      * Add a record to be rendered.
-     *
-     * @param RowInterface $record
      */
     public function addRecord(RowInterface $record): void;
 
@@ -44,15 +36,12 @@ interface StateInterface
 
     /**
      * Confirm one or more records have been set.
-     *
-     * @return bool
      */
     public function hasRecords(): bool;
 
     /**
      * Get the current record.
      *
-     * @return RowInterface
      *
      * @throws VCsvStreamException
      */

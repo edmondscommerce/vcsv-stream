@@ -2,6 +2,7 @@
 
 namespace BenRowan\VCsvStream\Renderers;
 
+use BenRowan\VCsvStream\Stream\ConfigInterface;
 use BenRowan\VCsvStream\Stream;
 
 abstract class AbstractRowRenderer implements RowRendererInterface
@@ -9,12 +10,9 @@ abstract class AbstractRowRenderer implements RowRendererInterface
     /**
      * Handles the transformation of column data into a CSV row string.
      *
-     * @param Stream\ConfigInterface $config
-     * @param array $columns
      *
-     * @return string
      */
-    protected function renderRow(Stream\ConfigInterface $config, array $columns): string
+    protected function renderRow(ConfigInterface $config, array $columns): string
     {
         $row = implode(
             $config->getDelimiter(),

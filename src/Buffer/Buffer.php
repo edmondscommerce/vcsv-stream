@@ -4,27 +4,23 @@ namespace BenRowan\VCsvStream\Buffer;
 
 class Buffer implements BufferInterface
 {
-    private $buffer = '';
+    private string $buffer = '';
 
     /**
      * Get the current size of the buffer in bytes.
-     *
-     * @return int
      */
     public function currentSizeInBytes(): int
     {
-        return \strlen($this->buffer);
+        return \strlen((string) $this->buffer);
     }
 
     /**
      * Removes $bytes bytes from the start of the buffer.
-     *
-     * @param int $bytes
      */
     public function clean(int $bytes): void
     {
         if ($bytes < $this->currentSizeInBytes()) {
-            $this->buffer = \substr($this->buffer, $bytes);
+            $this->buffer = \substr((string) $this->buffer, $bytes);
             return;
         }
 
@@ -36,19 +32,15 @@ class Buffer implements BufferInterface
     /**
      * Reads $bytes bytes from the start of the buffer.
      *
-     * @param int $bytes
      *
-     * @return string
      */
     public function read(int $bytes): string
     {
-        return \substr($this->buffer, 0, $bytes);
+        return \substr((string) $this->buffer, 0, $bytes);
     }
 
     /**
      * Adds content to the buffer.
-     *
-     * @param string $content
      */
     public function add(string $content): void
     {

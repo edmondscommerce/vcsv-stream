@@ -2,6 +2,12 @@
 
 namespace BenRowan\VCsvStream;
 
+use BenRowan\VCsvStream\Stream\File;
+use BenRowan\VCsvStream\Stream\Config;
+use BenRowan\VCsvStream\Stream\State;
+use BenRowan\VCsvStream\Stream\FileInterface;
+use BenRowan\VCsvStream\Stream\ConfigInterface;
+use BenRowan\VCsvStream\Stream\StateInterface;
 use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
 use BenRowan\VCsvStream\Generators\GeneratorFactory;
 use BenRowan\VCsvStream\Rows\RowInterface;
@@ -9,20 +15,11 @@ use BenRowan\VCsvStream\Stream;
 
 class VCsvStream
 {
-    /**
-     * @var Stream\FileInterface
-     */
-    private static $file;
+    private static ?File $file = null;
 
-    /**
-     * @var Stream\ConfigInterface
-     */
-    private static $config;
+    private static ?Config $config = null;
 
-    /**
-     * @var Stream\StateInterface
-     */
-    private static $state;
+    private static ?State $state = null;
 
     /**
      * Initialise VCsvStream.
@@ -33,9 +30,9 @@ class VCsvStream
      */
     public static function setup(array $config = []): void
     {
-        self::$file   = new Stream\File();
-        self::$config = new Stream\Config($config);
-        self::$state  = new Stream\State();
+        self::$file   = new File();
+        self::$config = new Config($config);
+        self::$state  = new State();
 
         GeneratorFactory::setup();
 
@@ -44,38 +41,30 @@ class VCsvStream
 
     /**
      * Gets the current representation of the file.
-     *
-     * @return Stream\FileInterface
      */
-    public static function getFile(): Stream\FileInterface
+    public static function getFile(): FileInterface
     {
         return self::$file;
     }
 
     /**
      * Gets the current configuration.
-     *
-     * @return Stream\ConfigInterface
      */
-    public static function getConfig(): Stream\ConfigInterface
+    public static function getConfig(): ConfigInterface
     {
         return self::$config;
     }
 
     /**
      * Gets the current stream state.
-     *
-     * @return Stream\StateInterface
      */
-    public static function getState(): Stream\StateInterface
+    public static function getState(): StateInterface
     {
         return self::$state;
     }
 
     /**
      * Set the header to be rendered.
-     *
-     * @param RowInterface $header
      */
     public static function setHeader(RowInterface $header): void
     {
@@ -84,8 +73,6 @@ class VCsvStream
 
     /**
      * Add a record to be rendered.
-     *
-     * @param RowInterface $record
      */
     public static function addRecord(RowInterface $record): void
     {

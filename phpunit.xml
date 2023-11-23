@@ -1,24 +1,13 @@
-<phpunit
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.1/phpunit.xsd"
-        cacheTokens="false"
-        colors="true"
-        verbose="true"
-        defaultTestSuite="tests">
-    <testsuites>
-        <testsuite name="tests">
-            <directory suffix="Test.php">../tests/Small</directory>
-            <directory suffix="Test.php">../tests/Medium</directory>
-            <directory suffix="Test.php">../tests/Large</directory>
-        </testsuite>
-        <testsuite name="small">
-            <directory suffix="Test.php">../tests/Small</directory>
-        </testsuite>
-        <testsuite name="medium">
-            <directory suffix="Test.php">../tests/Medium</directory>
-        </testsuite>
-        <testsuite name="large">
-            <directory suffix="Test.php">../tests/Large</directory>
-        </testsuite>
-    </testsuites>
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.4/phpunit.xsd" colors="true" defaultTestSuite="tests" cacheDirectory=".phpunit.cache">
+  <coverage/>
+  <testsuites>
+    <testsuite name="tests">
+      <directory suffix="Test.php">./tests/Small</directory>
+    </testsuite>
+    <testsuite name="small">
+      <directory suffix="Test.php">./tests/Small</directory>
+    </testsuite>
+  </testsuites>
+  <source/>
 </phpunit>

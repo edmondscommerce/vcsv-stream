@@ -4,7 +4,7 @@ namespace BenRowan\VCsvStream\Rows;
 
 class Header extends AbstractRow
 {
-    private $rendered = false;
+    private bool $rendered = false;
 
     public function markRowRendered(): void
     {

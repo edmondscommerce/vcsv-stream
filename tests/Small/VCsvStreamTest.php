@@ -2,6 +2,9 @@
 
 namespace BenRowan\VCsvStream\Tests\Small;
 
+use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
+use PHPUnit\Framework\Attributes\Test;
+use SplFileObject;
 use BenRowan\VCsvStream\Rows\Header;
 use BenRowan\VCsvStream\Rows\NoHeader;
 use BenRowan\VCsvStream\Rows\Record;
@@ -10,12 +13,12 @@ use PHPUnit\Framework\TestCase;
 
 class VCsvStreamTest extends TestCase
 {
-    public const HEADER_1 = 'Column One';
-    public const HEADER_2 = 'Column Two';
-    public const HEADER_3 = 'Coulumn Three';
+    final public const HEADER_1 = 'Column One';
+    final public const HEADER_2 = 'Column Two';
+    final public const HEADER_3 = 'Coulumn Three';
 
     /**
-     * @throws \BenRowan\VCsvStream\Exceptions\VCsvStreamException
+     * @throws VCsvStreamException
      */
     private function setupWithHeader(): void
     {
@@ -32,7 +35,7 @@ class VCsvStreamTest extends TestCase
     }
 
     /**
-     * @throws \BenRowan\VCsvStream\Exceptions\VCsvStreamException
+     * @throws VCsvStreamException
      */
     private function setupWithNoHeader(): void
     {
@@ -51,9 +54,9 @@ class VCsvStreamTest extends TestCase
     /**
      * Run the code...
      *
-     * @test
-     * @throws \BenRowan\VCsvStream\Exceptions\VCsvStreamException
+     * @throws VCsvStreamException
      */
+    #[Test]
     public function iCanGetDataFromStream(): void
     {
         $this->setupWithHeader();
@@ -74,7 +77,7 @@ class VCsvStreamTest extends TestCase
 
         VCsvStream::addRecords($records);
 
-        $vCsv = new \SplFileObject('vcsv://fixture.csv');
+        $vCsv = new SplFileObject('vcsv://fixture.csv');
 
         $rows = [];
         while ($row = $vCsv->fgetcsv()) {
@@ -87,9 +90,9 @@ class VCsvStreamTest extends TestCase
     /**
      * Run the code...
      *
-     * @test
-     * @throws \BenRowan\VCsvStream\Exceptions\VCsvStreamException
+     * @throws VCsvStreamException
      */
+    #[Test]
     public function iCanGetDataFromStreamWithNoHeader(): void
     {
         $this->setupWithNoHeader();
@@ -110,7 +113,7 @@ class VCsvStreamTest extends TestCase
 
         VCsvStream::addRecords($records);
 
-        $vCsv = new \SplFileObject('vcsv://fixture.csv');
+        $vCsv = new SplFileObject('vcsv://fixture.csv');
 
         $rows = [];
         while ($row = $vCsv->fgetcsv()) {

@@ -9,13 +9,14 @@
     }
   ],
   "require": {
-    "php": "^7.1",
-    "fzaninotto/faker": "^1.7"
+    "php": "^8.0",
+    "fakerphp/faker": "^1.20"
   },
   "require-dev": {
-    "phpstan/phpstan": "^0.9.2",
+    "phpstan/phpstan": "@stable",
     "phpmd/phpmd" : "@stable",
-    "phpunit/phpunit": "^7.1"
+    "phpunit/phpunit": "@stable",
+    "rector/rector": "^0.18.10"
   },
   "autoload": {
     "psr-4": {

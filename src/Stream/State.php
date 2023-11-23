@@ -10,22 +10,20 @@ class State implements StateInterface
     /**
      * @var RowInterface The header to be used for the CSV file.
      */
-    private $header;
+    private ?RowInterface $header = null;
 
     /**
      * @var RowInterface[] All records to be added to the CSV file.
      */
-    private $records = [];
+    private array $records = [];
 
     /**
      * @var int Pointer to the current record to be rendered.
      */
-    private $currentRecord = 0;
+    private int $currentRecord = 0;
 
     /**
      * Add a header to be rendered.
-     *
-     * @param RowInterface $header
      */
     public function setHeader(RowInterface $header): void
     {
@@ -34,8 +32,6 @@ class State implements StateInterface
 
     /**
      * Confirm a header has been set.
-     *
-     * @return bool
      */
     public function hasHeader(): bool
     {
@@ -44,8 +40,6 @@ class State implements StateInterface
 
     /**
      * Get the current header.
-     *
-     * @return RowInterface
      */
     public function getHeader(): RowInterface
     {
@@ -54,8 +48,6 @@ class State implements StateInterface
 
     /**
      * Add a record to be rendered.
-     *
-     * @param RowInterface $record
      */
     public function addRecord(RowInterface $record): void
     {
@@ -76,8 +68,6 @@ class State implements StateInterface
 
     /**
      * Confirm one or more records have been set.
-     *
-     * @return bool
      */
     public function hasRecords(): bool
     {
@@ -87,7 +77,6 @@ class State implements StateInterface
     /**
      * Get the current record.
      *
-     * @return RowInterface
      *
      * @throws VCsvStreamException
      */

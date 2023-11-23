@@ -44,8 +44,6 @@ abstract class AbstractRow implements RowInterface
     /**
      *
      *
-     * @param string $name
-     * @return GeneratorInterface
      * @throws VCsvStreamException
      */
     public function getColumnGenerator(string $name): GeneratorInterface

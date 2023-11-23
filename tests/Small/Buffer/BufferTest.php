@@ -2,6 +2,9 @@
 
 namespace BenRowan\VCsvStream\Tests\Small\Buffer;
 
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Iterator;
 use BenRowan\VCsvStream\Buffer\Buffer;
 use BenRowan\VCsvStream\Buffer\BufferInterface;
 use BenRowan\VCsvStream\Tests\Assets\AbstractTestCase;
@@ -14,16 +17,14 @@ class BufferTest extends AbstractTestCase
     /**
      * @var BufferInterface
      */
-    private $buffer;
+    private Buffer $buffer;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->buffer = new Buffer();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iGetTheCorrectBufferSizeInBytes(): void
     {
         $expectedBefore = \strlen(self::FIXTURE_EMPTY_CONTENT);
@@ -39,9 +40,7 @@ class BufferTest extends AbstractTestCase
         $this->assertSame($expectedAfter, $actualAfter);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iCanAddContentToTheBuffer(): void
     {
         $refProp = self::$reflectionHelper
@@ -60,9 +59,7 @@ class BufferTest extends AbstractTestCase
         $this->assertSame($expectedAfter, $actualAfter);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iCanReadContentFromTheBuffer(): void
     {
         $refProp = self::$reflectionHelper
@@ -76,9 +73,7 @@ class BufferTest extends AbstractTestCase
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iCanSafelyTryToReadMoreThanTheAvailableBytes(): void
     {
         $refProp = self::$reflectionHelper
@@ -95,13 +90,13 @@ class BufferTest extends AbstractTestCase
     }
 
     /**
-     * @test
      *
      * @param int $bytesToClean The number of bytes to be cleaned from the buffer.
      * @param string $expectedBuffer The expected buffer state after the clean.
      *
-     * @dataProvider iCanCleanTheBufferDataProvider
      */
+    #[DataProvider('iCanCleanTheBufferDataProvider')]
+    #[Test]
     public function iCanCleanTheBuffer(int $bytesToClean, string $expectedBuffer): void
     {
         $refProp = self::$reflectionHelper
@@ -122,17 +117,15 @@ class BufferTest extends AbstractTestCase
         $this->assertSame($expectedAfter, $actualAfter);
     }
 
-    public function iCanCleanTheBufferDataProvider(): array
+    public static function iCanCleanTheBufferDataProvider(): Iterator
     {
-        return [
-            'clean_bytes_less_than_buffer_bytes' => [
-                2,
-                \substr(self::FIXTURE_CONTENT, 2)
-            ],
-            'clean_bytes_greater_than_buffer_bytes' => [
-                100,
-                ''
-            ]
+        yield 'clean_bytes_less_than_buffer_bytes' => [
+            2,
+            \substr(self::FIXTURE_CONTENT, 2)
+        ];
+        yield 'clean_bytes_greater_than_buffer_bytes' => [
+            100,
+            ''
         ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace BenRowan\VCsvStream\Renderers;
 
+use BenRowan\VCsvStream\Stream\ConfigInterface;
+use BenRowan\VCsvStream\Stream\StateInterface;
 use BenRowan\VCsvStream\Exceptions\VCsvStreamException;
 use BenRowan\VCsvStream\Stream;
 use BenRowan\VCsvStream\Rows\Header as HeaderRow;
@@ -17,14 +19,11 @@ class Record extends AbstractRowRenderer
      *  - (1st) Record generator
      *  - (2nd) Header generator
      *
-     * @param Stream\ConfigInterface $config
-     * @param Stream\StateInterface $streamState
      *
-     * @return string
      *
      * @throws VCsvStreamException
      */
-    public function render(Stream\ConfigInterface $config, Stream\StateInterface $streamState): string
+    public function render(ConfigInterface $config, StateInterface $streamState): string
     {
         if (! $streamState->hasRecords()) {
             return '';

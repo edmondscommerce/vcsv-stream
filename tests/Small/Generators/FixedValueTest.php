@@ -2,14 +2,13 @@
 
 namespace BenRowan\VCsvStream\Tests\Small\Generators;
 
+use PHPUnit\Framework\Attributes\Test;
 use BenRowan\VCsvStream\Generators\FixedValue;
 use BenRowan\VCsvStream\Tests\Assets\AbstractTestCase;
 
 class FixedValueTest extends AbstractTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function iCanCreateAStringValue(): void
     {
         $fixedValue = new FixedValue('Hello!');
@@ -20,9 +19,7 @@ class FixedValueTest extends AbstractTestCase
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iCanCreateAnIntegerValue(): void
     {
         $fixedValue = new FixedValue(10);
@@ -33,9 +30,7 @@ class FixedValueTest extends AbstractTestCase
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iCanCreateAFloatValue(): void
     {
         $fixedValue = new FixedValue(0.1);
@@ -46,9 +41,7 @@ class FixedValueTest extends AbstractTestCase
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iCanCreateANullValue(): void
     {
         $fixedValue = new FixedValue(null);

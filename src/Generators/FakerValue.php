@@ -2,6 +2,7 @@
 
 namespace BenRowan\VCsvStream\Generators;
 
+use Faker\Generator;
 use Faker;
 
 final class FakerValue implements GeneratorInterface
@@ -11,15 +12,9 @@ final class FakerValue implements GeneratorInterface
      */
     private $faker;
 
-    /**
-     * @var string
-     */
-    private $property;
-
-    public function __construct(Faker\Generator $faker, string $property, bool $isUnique = false)
+    public function __construct(Generator $faker, private readonly string $property, bool $isUnique = false)
     {
         $this->faker    = $isUnique ? $faker->unique() : $faker;
-        $this->property = $property;
     }
 
     public function generate(): string

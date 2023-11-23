@@ -2,6 +2,7 @@
 
 namespace BenRowan\VCsvStream\Tests\Small\Stream;
 
+use PHPUnit\Framework\Attributes\Test;
 use BenRowan\VCsvStream\Stream\Config;
 use BenRowan\VCsvStream\Tests\Assets\AbstractTestCase;
 
@@ -9,9 +10,7 @@ class ConfigTest extends AbstractTestCase
 {
     private const FIXTURE_CONFIGURED_VALUE = 'configured_value';
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iGetTheDefaultDelimiterWhenNoConfigIsSet(): void
     {
         $config = new Config([]);
@@ -25,9 +24,7 @@ class ConfigTest extends AbstractTestCase
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iGetTheConfiguredDelimiter(): void
     {
         $config = new Config([
@@ -40,9 +37,7 @@ class ConfigTest extends AbstractTestCase
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iGetTheDefaultEnclosureWhenNoConfigIsSet(): void
     {
         $config = new Config([]);
@@ -56,9 +51,7 @@ class ConfigTest extends AbstractTestCase
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iGetTheConfiguredEnclosure(): void
     {
         $config = new Config([
@@ -71,9 +64,7 @@ class ConfigTest extends AbstractTestCase
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iGetTheDefaultNewlineWhenNoConfigIsSet(): void
     {
         $config = new Config([]);
@@ -87,9 +78,7 @@ class ConfigTest extends AbstractTestCase
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iGetTheConfiguredNewline(): void
     {
         $config = new Config([

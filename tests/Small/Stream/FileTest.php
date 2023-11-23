@@ -2,6 +2,7 @@
 
 namespace BenRowan\VCsvStream\Tests\Small\Stream;
 
+use PHPUnit\Framework\Attributes\Test;
 use BenRowan\VCsvStream\Stream\File;
 use BenRowan\VCsvStream\Stream\FileInterface;
 use BenRowan\VCsvStream\Tests\Assets\AbstractTestCase;
@@ -11,16 +12,14 @@ class FileTest extends AbstractTestCase
     /**
      * @var FileInterface
      */
-    private $file;
+    private File $file;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->file = new File();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iGetMyUid(): void
     {
         if (! \function_exists('posix_getuid')) {
@@ -33,9 +32,7 @@ class FileTest extends AbstractTestCase
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iGetMyGid(): void
     {
         if (! \function_exists('posix_getgid')) {
@@ -48,9 +45,7 @@ class FileTest extends AbstractTestCase
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iGetRootUid(): void
     {
         $refProp = self::$reflectionHelper
@@ -64,9 +59,7 @@ class FileTest extends AbstractTestCase
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iGetRootGid(): void
     {
         $refProp = self::$reflectionHelper

@@ -4,11 +4,8 @@ namespace BenRowan\VCsvStream\Rows;
 
 class Record extends AbstractRow
 {
-    private $rowCount;
-
-    public function __construct(int $rowCount)
+    public function __construct(private int $rowCount)
     {
-        $this->rowCount = $rowCount;
     }
 
     public function markRowRendered(): void

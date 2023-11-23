@@ -8,11 +8,11 @@ class Config implements ConfigInterface
      * Configuration keys.
      */
 
-    public const DELIMITER = 'delimiter';
+    final public const DELIMITER = 'delimiter';
 
-    public const ENCLOSURE = 'enclosure';
+    final public const ENCLOSURE = 'enclosure';
 
-    public const NEWLINE   = 'newline';
+    final public const NEWLINE   = 'newline';
 
     /**
      * Default values.
@@ -24,55 +24,36 @@ class Config implements ConfigInterface
 
     private const DEFAULT_NEWLINE   = "\n";
 
-    /**
-     * @var array All VCsvStream configuration.
-     */
-    private $config;
-
-    public function __construct(array $config)
+    public function __construct(
+        /**
+         * @var array All VCsvStream configuration.
+         */
+        private array $config
+    )
     {
-        $this->config = $config;
     }
 
     /**
      * Get the currently configured delimiter character.
-     *
-     * @return string
      */
     public function getDelimiter(): string
     {
-        if (isset($this->config[self::DELIMITER])) {
-            return $this->config[self::DELIMITER];
-        }
-
-        return self::DEFAULT_DELIMITER;
+        return $this->config[self::DELIMITER] ?? self::DEFAULT_DELIMITER;
     }
 
     /**
      * Get the currently configured enclosure character.
-     *
-     * @return string
      */
     public function getEnclosure(): string
     {
-        if (isset($this->config[self::ENCLOSURE])) {
-            return $this->config[self::ENCLOSURE];
-        }
-
-        return self::DEFAULT_ENCLOSURE;
+        return $this->config[self::ENCLOSURE] ?? self::DEFAULT_ENCLOSURE;
     }
 
     /**
      * Get the currently configured newline character.
-     *
-     * @return string
      */
     public function getNewline(): string
     {
-        if (isset($this->config[self::NEWLINE])) {
-            return $this->config[self::NEWLINE];
-        }
-
-        return self::DEFAULT_NEWLINE;
+        return $this->config[self::NEWLINE] ?? self::DEFAULT_NEWLINE;
     }
 }

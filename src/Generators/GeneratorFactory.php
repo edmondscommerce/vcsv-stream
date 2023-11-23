@@ -2,6 +2,7 @@
 
 namespace BenRowan\VCsvStream\Generators;
 
+use Faker\Factory;
 use Faker;
 
 class GeneratorFactory
@@ -16,17 +17,15 @@ class GeneratorFactory
      */
     public static function setup(): void
     {
-        self::$faker = Faker\Factory::create();
+        self::$faker = Factory::create();
     }
 
     /**
      * Create a fixed value generator.
      *
      * @param mixed $value Any value which can be cast to a string.
-     *
-     * @return GeneratorInterface
      */
-    public static function createFixedValue($value): GeneratorInterface
+    public static function createFixedValue(mixed $value): GeneratorInterface
     {
         return new FixedValue($value);
     }
@@ -36,8 +35,6 @@ class GeneratorFactory
      *
      * @param string $property The faker property to use to generate your value.
      * @param bool $isUnique Whether you need the value to be unique.
-     *
-     * @return GeneratorInterface
      */
     public static function createFakerValue(string $property = 'text', bool $isUnique = false): GeneratorInterface
     {

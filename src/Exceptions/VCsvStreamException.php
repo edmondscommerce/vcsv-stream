@@ -2,7 +2,8 @@
 
 namespace BenRowan\VCsvStream\Exceptions;
 
-class VCsvStreamException extends \Exception
+use Exception;
+class VCsvStreamException extends Exception
 {
 
 }
